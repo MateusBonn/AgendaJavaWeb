@@ -11,7 +11,7 @@
 </head>
 <body>
 	<h1>Criar novo contato</h1>
-	<form class="frmContato" name="frmContato" action="">
+	<form class="frmContato" name="frmContato" action="insert">
 		<table>
 			<tr>
 				<td><input type="text" name="name" placeholder="Nome">

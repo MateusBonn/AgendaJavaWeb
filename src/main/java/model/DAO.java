@@ -2,6 +2,9 @@ package model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class DAO {
 	
@@ -22,20 +25,68 @@ public class DAO {
 			con = DriverManager.getConnection(url, user, password);
 			return con;
 			
-		} catch (Exception e) {
-			
+		} catch (Exception e) {	
 			System.out.println(e);
-			return null;
-			
+			return null;	
 		}
 	}
 	
-	//Teste de conexao
+	/** CRUD INSERT **/
 	
-	/*
-	 * public void testeConexao() { try { Connection con = conectar();
-	 * System.out.println(con); con.close(); } catch (Exception e) {
-	 * System.out.println(e); } }
-	 */
-
+	public void dataInsert(JavaBeans contato) {
+		
+		String create = "INSERT INTO CONTATOS (NOME, TELEFONE, EMAIL)"
+				+ "VALUES (?, ?, ?)";
+		
+		try {
+			
+			Connection con = conectar();
+			
+			PreparedStatement pst = con.prepareStatement(create);
+			
+			pst.setString(1, contato.getNome());
+			pst.setString(2, contato.getFone());
+			pst.setString(3, contato.getEmail());
+			
+			pst.executeUpdate();
+			
+			con.close();
+			
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
+	}
+	
+	/*CRUD READ*/
+	public ArrayList <JavaBeans> dataSelect() {
+		
+		ArrayList<JavaBeans> contatos = new ArrayList<>();
+		String read = "SELECT * FROM CONTATOS ORDER BY nome";
+		
+		try {
+			
+			Connection con = conectar();
+			
+			PreparedStatement pst = con.prepareStatement(read);
+			ResultSet rs = pst.executeQuery();
+			
+			while (rs.next()) {
+				String idcon = rs.getString(1);
+				String name = rs.getString(2);
+				String phone = rs.getString(3);
+				String email = rs.getString(4);
+				
+				contatos.add(new JavaBeans (idcon, name, phone, email));
+			}
+			con.close();
+			
+			return contatos;
+		} catch (Exception e) {
+			System.out.println(e);
+			return null;
+		}
+		
+	}
+		
 }
