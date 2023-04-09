@@ -10,10 +10,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import model.DAO;
 import model.JavaBeans;
 
-@WebServlet(urlPatterns = { "/Controller", "/main", "/insert", "/select", "/update", "/delete" })
+@WebServlet(urlPatterns = { "/Controller", "/main", "/insert", "/select", "/update", "/delete", "/report" })
 public class Controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	DAO dao = new DAO();
@@ -35,6 +41,8 @@ public class Controller extends HttpServlet {
 			editVerificaContact(request, response);
 		} else if (action.equals("/delete")) {
 			deleteContact(request, response);
+		} else if (action.equals("/report")) {
+			makeReport(request, response);
 		}
 	}
 
@@ -72,8 +80,8 @@ public class Controller extends HttpServlet {
 
 		if (action.equals("/select")) {
 			String idcon = request.getParameter("idcon");
-			
-			if(idcon.equals(null)) {
+
+			if (idcon.equals(null)) {
 				// Setar a variável JavaBeans
 				contato.setNome(request.getParameter("name"));
 				contato.setFone(request.getParameter("phone"));
@@ -89,8 +97,7 @@ public class Controller extends HttpServlet {
 				// Encaminhado ao EditContact.jsp
 				RequestDispatcher rd = request.getRequestDispatcher("NewContact.jsp");
 				rd.forward(request, response);
-			}
-			else {
+			} else {
 				// Setar a variável JavaBeans
 				contato.setIdcon(idcon);
 
@@ -107,7 +114,7 @@ public class Controller extends HttpServlet {
 				RequestDispatcher rd = request.getRequestDispatcher("EditContact.jsp");
 				rd.forward(request, response);
 			}
-			
+
 		}
 		if (action.equals("/update")) {
 			contato.setIdcon(request.getParameter("idcon"));
@@ -131,5 +138,56 @@ public class Controller extends HttpServlet {
 		dao.deleteData(contato);
 
 		response.sendRedirect("main");
+	}
+	
+	private void makeReport (HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		Document documento = new Document();
+		
+		try {
+			
+			//tipo de documento 
+			response.setContentType("apllication/pdf");
+			
+			//nome do documento
+			response.addHeader("Content-Disposition", "inline; filename=" + "Contatos.pdf");
+			
+			//criando o documento
+			PdfWriter.getInstance(documento, response.getOutputStream());
+			
+			//abrir o conteúdo
+			documento.open();
+			documento.add(new Paragraph("Lista de contatos: "));
+			documento.add(new Paragraph(" "));
+			
+			// criar uma tabela
+			PdfPTable tabelaContatos = new PdfPTable(3);
+			
+			//Cabeçalho
+			PdfPCell name = new PdfPCell(new Paragraph("Nome"));
+			tabelaContatos.addCell(name);
+			
+			PdfPCell phone = new PdfPCell(new Paragraph("Telefone"));
+			tabelaContatos.addCell(phone);
+			
+			PdfPCell email = new PdfPCell(new Paragraph("E-mail"));
+			tabelaContatos.addCell(email);
+			
+			ArrayList<JavaBeans> list = dao.dataSelect();
+			for (int i= 0; i <list.size(); i++) {
+				tabelaContatos.addCell(list.get(i).getNome());
+				tabelaContatos.addCell(list.get(i).getFone());
+				tabelaContatos.addCell(list.get(i).getEmail());
+				
+			}
+			
+			documento.add(tabelaContatos);
+			
+			documento.close();
+		} catch (Exception e) {
+			System.out.println(e);
+			documento.close();
+		}
 	}
 }

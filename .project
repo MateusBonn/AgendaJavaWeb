@@ -35,6 +35,11 @@
 			<location>C:/Users/mateu/Downloads/Teste/Agenda.png</location>
 		</link>
 		<link>
+			<name>src/main/webapp/WEB-INF/lib/itextpdf-5.5.13.3.jar</name>
+			<type>1</type>
+			<location>C:/Users/mateu/Downloads/itextpdf-5.5.13.3/itextpdf-5.5.13.3.jar</location>
+		</link>
+		<link>
 			<name>src/main/webapp/WEB-INF/lib/mysql-connector-j-8.0.32.jar</name>
 			<type>1</type>
 			<location>C:/Program Files (x86)/MySQL/Connector J 8.0/mysql-connector-j-8.0.32.jar</location>
