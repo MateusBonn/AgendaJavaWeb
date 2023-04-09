@@ -1,7 +1,3 @@
-function trocarImagem(elemento, novaImagem) {
-	elemento.src = novaImagem;
-}
-
 function validar() {
 	let nome = frmContato.name.value
 	let fone = frmContato.phone.value
@@ -27,6 +23,10 @@ function validar() {
 	}
 }
 
+/** 
+* @author Mateus Bonn Ferreira
+* @param idcon
+*/
 function confirmar(idcon) {
 
 	let resposta = confirm("Você confirma o cancelamento deste contato? ")
@@ -35,15 +35,3 @@ function confirmar(idcon) {
 		window.location.href = "delete?idcon=" + idcon
 	}
 }
-
-/*function validarExiste(msg){
-	validar()
-	if(msg === null){
-		window.location.href = "insert"
-	}
-	alert(msg)
-}
-
-function enviarFormulario(event) {
-  event.target.submit(); 
-}*/

@@ -14,9 +14,7 @@
 <body>
 	<div id="inicio">
 		<h1>Agenda de contatos</h1>
-		<img class="imgBegin" src=<%=iconeBase%>
-			onmouseover="trocarImagem(this, 'images/Agenda_aberta.png')"
-			onmouseout="trocarImagem(this, <%=iconeBase%>)">
+		<img class="imgBegin" src=<%=iconeBase%>>
 	</div>
 	<div class="container">
 		<a href="main" class="botaoInicial">Acessar</a>

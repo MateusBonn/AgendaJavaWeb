@@ -6,17 +6,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DAO.
+ */
 public class DAO {
 
-	/** Módulo de conexão **/
-	// Parâmetros de conexão
+	/** The driver. */
 	private String driver = "com.mysql.cj.jdbc.Driver";
+
+	/** The url. */
 	private String url = "jdbc:mysql://127.0.0.1:3306/" + "dbagenda?useTimezone=true&serverTimezone=UTC";
+
+	/** The user. */
 	private String user = "root";
+
+	/** The password. */
 	private String password = "mateusophia0508";
 
-	// Médodo de conexão
-
+	/**
+	 * Conectar.
+	 *
+	 * @return the connection
+	 */
 	private Connection conectar() {
 		Connection con = null;
 		try {
@@ -30,8 +42,11 @@ public class DAO {
 		}
 	}
 
-	/** CRUD INSERT **/
-
+	/**
+	 * Data insert.
+	 *
+	 * @param contato the contato
+	 */
 	public void dataInsert(JavaBeans contato) {
 
 		String create = "INSERT INTO CONTATOS (NOME, TELEFONE, EMAIL)" + "VALUES (?, ?, ?)";
@@ -56,8 +71,12 @@ public class DAO {
 
 	}
 
-	/* CRUD READ */
-	public ArrayList<JavaBeans> dataSelect() {
+	/**
+	 * Select all data.
+	 *
+	 * @return the array list
+	 */
+	public ArrayList<JavaBeans> selectAllData() {
 
 		ArrayList<JavaBeans> contatos = new ArrayList<>();
 		String read = "SELECT * FROM CONTATOS ORDER BY nome";
@@ -75,7 +94,7 @@ public class DAO {
 				String phone = rs.getString(3);
 				String email = rs.getString(4);
 
-				contatos.add(new JavaBeans(idcon, name, phone, email, null));
+				contatos.add(new JavaBeans(idcon, name, phone, email));
 			}
 			con.close();
 
@@ -87,6 +106,11 @@ public class DAO {
 
 	}
 
+	/**
+	 * Edits the data.
+	 *
+	 * @param contato the contato
+	 */
 	public void editData(JavaBeans contato) {
 		String update = "UPDATE CONTATOS SET NOME=?, TELEFONE=?, EMAIL=? WHERE IDCON = ?";
 
@@ -107,6 +131,11 @@ public class DAO {
 		}
 	}
 
+	/**
+	 * Delete data.
+	 *
+	 * @param contato the contato
+	 */
 	public void deleteData(JavaBeans contato) {
 
 		String delete = "DELETE FROM CONTATOS WHERE IDCON =?";
@@ -126,7 +155,12 @@ public class DAO {
 		}
 	}
 
-	public void selectVerificaData(JavaBeans contato) {
+	/**
+	 * Select data.
+	 *
+	 * @param contato the contato
+	 */
+	public void selectData(JavaBeans contato) {
 
 		String select = "SELECT * FROM CONTATOS WHERE;";
 
@@ -134,70 +168,16 @@ public class DAO {
 
 			Connection con = conectar();
 
-			if (contato.getIdcon() != null) {
+			String selectIdcon = select + "idcon = ?";
+			PreparedStatement pst = con.prepareStatement(selectIdcon);
+			pst.setString(1, contato.getIdcon());
+			ResultSet rs = pst.executeQuery();
 
-				String selectIdcon = select + "idcon = ?";
-				PreparedStatement pst = con.prepareStatement(selectIdcon);
-				pst.setString(1, contato.getIdcon());
-				ResultSet rs = pst.executeQuery();
-
-				while (rs.next()) {
-					contato.setIdcon(rs.getString(1));
-					contato.setNome(rs.getString(2));
-					contato.setFone(rs.getString(3));
-					contato.setEmail(rs.getString(4));
-				}
-			} else {
-				String sqlNome = "SELECT * FROM contatos WHERE nome = ?";
-				String sqlTelefone = "SELECT * FROM contatos WHERE telefone = ?";
-				String sqlEmail = "SELECT * FROM contatos WHERE email = ?";
-
-				// 3. Crie os PreparedStatements com as consultas SQL
-				PreparedStatement stmtNome = con.prepareStatement(sqlNome);
-				PreparedStatement stmtTelefone = con.prepareStatement(sqlTelefone);
-				PreparedStatement stmtEmail = con.prepareStatement(sqlEmail);
-
-				// 4. Preencha os parâmetros das consultas com os valores a serem pesquisados
-				stmtNome.setString(1, contato.getNome());
-				stmtTelefone.setString(1, contato.getFone());
-				stmtEmail.setString(1, contato.getEmail());
-
-				// 5. Execute as consultas
-				ResultSet rsNome = stmtNome.executeQuery();
-				
-				if (rsNome != null) {
-					contato.setIdcon(rsNome.getString(1));
-					contato.setNome(rsNome.getString(2));
-					contato.setFone(rsNome.getString(3));
-					contato.setEmail(rsNome.getString(4));
-				}
-				
-				ResultSet rsTelefone = stmtTelefone.executeQuery();
-				
-				if (rsTelefone != null) {
-					contato.setIdcon(rsTelefone.getString(1));
-					contato.setNome(rsTelefone.getString(2));
-					contato.setFone(rsTelefone.getString(3));
-					contato.setEmail(rsTelefone.getString(4));
-				}
-				
-				ResultSet rsEmail = stmtEmail.executeQuery();
-				if (rsEmail != null) {
-					contato.setIdcon(rsEmail.getString(1));
-					contato.setNome(rsEmail.getString(2));
-					contato.setFone(rsEmail.getString(3));
-					contato.setEmail(rsEmail.getString(4));
-				}
-				
-				String msg = null;
-				
-				if (rsNome.next() || rsTelefone.next() || rsEmail.next()) {
-				  msg = "O contato já existe no banco de dados.";
-				} else {
-				    msg = null;
-				}
-				
-				contato.setMsg(msg);
+			while (rs.next()) {
+				contato.setIdcon(rs.getString(1));
+				contato.setNome(rs.getString(2));
+				contato.setFone(rs.getString(3));
+				contato.setEmail(rs.getString(4));
 			}
 
 			con.close();
