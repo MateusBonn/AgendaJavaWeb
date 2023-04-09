@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.DAO;
 import model.JavaBeans;
 
-@WebServlet(urlPatterns = { "/Controller", "/main", "/insert", "/select", "/update" })
+@WebServlet(urlPatterns = { "/Controller", "/main", "/insert", "/select", "/update", "/delete" })
 public class Controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	DAO dao = new DAO();
@@ -32,7 +32,9 @@ public class Controller extends HttpServlet {
 		} else if (action.equals("/insert")) {
 			newContact(request, response);
 		} else if (action.equals("/select") || action.equals("/update")) {
-			editContact(request, response);
+			editVerificaContact(request, response);
+		} else if (action.equals("/delete")) {
+			deleteContact(request, response);
 		}
 	}
 
@@ -63,39 +65,71 @@ public class Controller extends HttpServlet {
 		rd.forward(request, response);
 	}
 
-	private void editContact(HttpServletRequest request, HttpServletResponse response)
+	private void editVerificaContact(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		String action = request.getServletPath();
 
 		if (action.equals("/select")) {
 			String idcon = request.getParameter("idcon");
+			
+			if(idcon.equals(null)) {
+				// Setar a variável JavaBeans
+				contato.setNome(request.getParameter("name"));
+				contato.setFone(request.getParameter("phone"));
+				contato.setEmail(request.getParameter("email"));
 
-			// Setar a variável JavaBeans
-			contato.setIdcon(idcon);
+				// Executar o método dataEdit(DAO)
+				dao.selectVerificaData(contato);
 
-			// Executar o método dataEdit(DAO)
-			dao.selectEditData(contato);
+				// Setar os atributos do formulário com o conteúdo JavaBeans
+				request.setAttribute("idcon", contato.getIdcon());
+				request.setAttribute("msg", contato.getMsg());
 
-			// Setar os atributos do formulário com o conteúdo JavaBeans
-			request.setAttribute("idcon", contato.getIdcon());
-			request.setAttribute("name", contato.getNome());
-			request.setAttribute("phone", contato.getFone());
-			request.setAttribute("email", contato.getEmail());
+				// Encaminhado ao EditContact.jsp
+				RequestDispatcher rd = request.getRequestDispatcher("NewContact.jsp");
+				rd.forward(request, response);
+			}
+			else {
+				// Setar a variável JavaBeans
+				contato.setIdcon(idcon);
 
-			// Encaminhado ao EditContact.jsp
-			RequestDispatcher rd = request.getRequestDispatcher("EditContact.jsp");
-			rd.forward(request, response);
+				// Executar o método dataEdit(DAO)
+				dao.selectVerificaData(contato);
+
+				// Setar os atributos do formulário com o conteúdo JavaBeans
+				request.setAttribute("idcon", contato.getIdcon());
+				request.setAttribute("name", contato.getNome());
+				request.setAttribute("phone", contato.getFone());
+				request.setAttribute("email", contato.getEmail());
+
+				// Encaminhado ao EditContact.jsp
+				RequestDispatcher rd = request.getRequestDispatcher("EditContact.jsp");
+				rd.forward(request, response);
+			}
+			
 		}
 		if (action.equals("/update")) {
 			contato.setIdcon(request.getParameter("idcon"));
 			contato.setNome(request.getParameter("name"));
 			contato.setFone(request.getParameter("phone"));
 			contato.setEmail(request.getParameter("email"));
-			
+
 			dao.editData(contato);
-			
+
 			response.sendRedirect("main");
 		}
+	}
+
+	private void deleteContact(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		String idcon = request.getParameter("idcon");
+
+		contato.setIdcon(idcon);
+
+		dao.deleteData(contato);
+
+		response.sendRedirect("main");
 	}
 }

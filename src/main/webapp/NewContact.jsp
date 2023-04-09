@@ -22,11 +22,12 @@
 				</td>
 			</tr>
 			<tr>
-				<td><input class="caixaEmail" type="text" name="email" placeholder="E-mail">
-				</td>
+				<td><input class="caixaEmail" type="text" name="email"
+					placeholder="E-mail"></td>
 			</tr>
 		</table>
-		<input type="button" value="Adicionar" class="botaoInicial" onclick="validar()">
+		<input type="button" value="Adicionar" class="botaoInicial"
+			onclick="validar()">
 	</form>
 </body>
 </html>
